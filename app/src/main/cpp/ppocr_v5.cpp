@@ -75,6 +75,10 @@ int PPOcrV5::load(const char* detParamPath, const char* detModelPath, const char
     detNet_.clear();
     recNet_.clear();
 
+    ncnn::set_omp_dynamic(0);
+    ncnn::set_omp_num_threads(1);
+
+    detNet_.opt.num_threads = 1;
     detNet_.opt.use_vulkan_compute = false;
     detNet_.opt.use_fp16_packed = useFp16;
     detNet_.opt.use_fp16_storage = useFp16;
@@ -107,7 +111,7 @@ void PPOcrV5::setDictionary(std::vector<std::string> dictionary)
 int PPOcrV5::detect(const cv::Mat& rgb, std::vector<OcrObject>& objects)
 {
     objects.clear();
-    cv::setNumThreads(ncnn::get_big_cpu_count());
+    cv::setNumThreads(1);
 
     int imgW = rgb.cols;
     int imgH = rgb.rows;
