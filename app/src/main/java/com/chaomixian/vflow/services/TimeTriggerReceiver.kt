@@ -68,6 +68,9 @@ class TimeTriggerReceiver : BroadcastReceiver() {
                                 "TimeTriggerReceiver",
                                 "忽略 60 秒内重复送达的定时触发器: ${resolvedTrigger.triggerId}"
                             )
+                            // 即使判定为重复送达（例如闹钟提前投递后重排到同一时刻），也必须重新排程，
+                            // 否则“重排到同一天→再次送达→被去重跳过”会中断下一天的闹钟链条。
+                            TimeTriggerHandler.rescheduleAlarm(appContext, resolvedTrigger)
                             return@launch
                         }
                         TriggerExecutionCoordinator.executeTrigger(
